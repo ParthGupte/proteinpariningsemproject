@@ -1,5 +1,8 @@
 from vectors import *
 import matplotlib.pyplot as plt
+from kearsley import Kearsley
+
+k = Kearsley()
 
 class Point:
     def __init__(self,coord,*args): #coord is a 1D array of 3 numbers
@@ -40,4 +43,7 @@ class Protein:
         ax.scatter(x,y,z,c=col)
         plt.show()
 
-        
+class Pairings:
+    def __init__(self,A,B): #accepts structures A and B
+        self.A = A
+        self.B = B
