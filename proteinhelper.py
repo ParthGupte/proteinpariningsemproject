@@ -44,6 +44,7 @@ class Protein:
         plt.show()
 
 class Pairings:
-    def __init__(self,A,B): #accepts structures A and B
+    def __init__(self,A,B,P): #accepts structures A and B. P is dictionary that has key as points of A and val as points of B 
         self.A = A
         self.B = B
+        
