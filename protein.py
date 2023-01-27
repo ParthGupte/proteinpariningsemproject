@@ -10,8 +10,12 @@ protB.rotate(np.random.randint(-5,5,size=3))
 
 pairing = Pairing([3,4,1,2,5,6,7,8,9,0],protA,protB)
 pairing.display('g','r')
-pairing.kearsley()
+rmsd = pairing.kearsley()
 pairing.display('g','r')
+while rmsd>0:
+    pairing.hungarian()
+    rmsd = pairing.kearsley()
+    pairing.display('g','r')
 # protA.display('r')
 # protA.translate([10,10,10])
 # protA.display('r')

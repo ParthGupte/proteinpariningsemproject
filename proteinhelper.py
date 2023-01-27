@@ -2,6 +2,7 @@ from vectors import *
 import matplotlib.pyplot as plt
 from kearsley import Kearsley
 from scipy.spatial.transform import Rotation as R
+from scipy.optimize import linear_sum_assignment
 
 k = Kearsley()
 
@@ -17,6 +18,14 @@ k = Kearsley()
 #         A_vec = Vec(self.coord.vec - (self.coord.dot(axis_cap))*axis_cap.vec)
 #         A1_vec = Vec((A_vec.mod()*mt.cos(angle))*A_vec.cap().vec + (A_vec.mod()*mt.sin(angle))*(A_vec.cross(axis_cap).vec))        
 #         self.coord = Vec(A1_vec.vec + self.coord.dot(axis_cap)*axis_cap.vec)
+
+def dist(a,b):
+    S = 0
+    for i in range(len(a)):
+        S += (a[i]-b[i])**2
+    
+    return mt.sqrt(S)
+
 
 class Structure:
     def __init__(self,points): #points is a nx3 array representing pointsin the structure
@@ -54,9 +63,10 @@ class Pairing:
             V.append(self.B.points[self.perm[i]])
         V_arr = np.array(V)
         U = self.A.points
-        k.fit(U,V_arr)
+        rmsd = k.fit(U,V_arr)
         V_trans = k.transform(V_arr)
         self.B.points = V_trans
+        return rmsd
 
     def display(self,col1,col2):
         fig = plt.figure()
@@ -71,6 +81,21 @@ class Pairing:
         ax.scatter(x,y,z,c=col2)
         plt.show()
 
+    def hungarian(self):
+        cost = np.zeros((len(self.A.points),len(self.B.points)))
+        i = -1
+        for a in self.A.points:
+            i += 1
+            j = -1
+            for b in self.B.points:
+                j += 1
+                cost[i,j] = dist(a,b)
+        
+        row_ind,col_ind = linear_sum_assignment(cost)
+        self.perm = col_ind
+        return col_ind
+
+                
 
 
     
