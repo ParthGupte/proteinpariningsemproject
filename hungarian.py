@@ -1,8 +1,8 @@
 from proteinhelper import *
 
-protA = Structure(random = True, size = 100)
+protA = Structure(cube = True)
 protB = Structure(protA.points,protA.vectors)
-
+protA.display('g')
 #translating and rotating randomly
 protB.translate([1,2,3])
 protB.rotate(R.from_rotvec(np.random.randint(-5,5,size=3)))
@@ -19,7 +19,7 @@ for i in range(protA.points.shape[0]):
         if np.all(NA.points[0] != NB.points[0]):
             print(NA.points[0],NB.points[0])
             print("Not True for",(i,j))
-        vectorsA = Structure(np.concatenate((NA.vectors[0],-NA.vectors[0]))) #so that the tranlation component of kersley get cancelled and we can work with only rotations
+        vectorsA = Structure(np.concatenate((NA.vectors[0],-NA.vectors[0]))) #so that the translation component of kersley get cancelled and we can work with only rotations
         vectorsB = Structure(np.concatenate((NB.vectors[0],-NB.vectors[0])))
         pair_vecAB = Pairing([0,1,2,3,4,5],vectorsA,vectorsB)
         rot = pair_vecAB.kearsley()[2]
@@ -28,11 +28,7 @@ for i in range(protA.points.shape[0]):
         pair_match.hungarian()
         rmsd = pair_match.rmsd()
         if i==j:
-            print(pair_match.A.points)
-            print("--------------------------")
-            print(pair_match.B.points)
-            print("----------------------------------------")
-            print(pair_match.perm)
+            pair_match.display('red','green')
         neibour_scoredict[(i,j)] = rmsd
 
 best_match = sorted(neibour_scoredict.items(),key=lambda x:x[1])[0]

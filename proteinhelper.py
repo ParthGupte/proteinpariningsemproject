@@ -31,8 +31,14 @@ def norm(v: np.ndarray):
 
 class Structure:
     def __init__(self,*args,**kargs): #points is a nx3 array representing points in the structure
-        if kargs == {}:
+        try:
+            kargs['random']
+        except:
             kargs['random'] = False
+        try:
+            kargs['cube']
+        except:
+            kargs['cube'] = False
         if kargs['random']:
             L = []
             vec = []
@@ -40,6 +46,11 @@ class Structure:
                 L.append(np.random.randint(-5,5,size=3))
                 V3 = [np.random.randint(-5,5,size=3),np.random.randint(-5,5,size=3),np.random.randint(-5,5,size=3)]
                 vec.append([V3[0]/norm(V3[0]),V3[1]/norm(V3[1]),V3[2]/norm(V3[2])])
+            points = np.array(L)
+            vectors = np.array(vec)
+        elif kargs['cube']:
+            L = [[1,1,1],[1,1,-1],[1,-1,1],[-1,1,1],[1,-1,-1],[-1,-1,1],[-1,1,-1],[-1,-1,-1]]
+            vec = [[[1,0,0],[0,1,0],[0,0,1]],[[0,1,0],[0,0,1],[1,0,0]],[[0,0,1],[1,0,0],[0,1,0]],[[1,0,0],[0,0,1],[0,1,0]],[[0,0,1],[0,1,0],[1,0,0]],[[0,1,0],[1,0,0],[0,0,1]],[[-1,0,0],[0,-1,0],[0,0,-1]],[[0,-1,0],[0,0,-1],[-1,0,0]]]
             points = np.array(L)
             vectors = np.array(vec)
         else:
