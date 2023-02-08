@@ -51,8 +51,8 @@ class Structure:
         elif kargs['cube']:
             L = [[1,1,1],[1,1,-1],[1,-1,1],[-1,1,1],[1,-1,-1],[-1,-1,1],[-1,1,-1],[-1,-1,-1]]
             vec = [[[1,0,0],[0,1,0],[0,0,1]],[[0,1,0],[0,0,1],[1,0,0]],[[0,0,1],[1,0,0],[0,1,0]],[[1,0,0],[0,0,1],[0,1,0]],[[0,0,1],[0,1,0],[1,0,0]],[[0,1,0],[1,0,0],[0,0,1]],[[-1,0,0],[0,-1,0],[0,0,-1]],[[0,-1,0],[0,0,-1],[-1,0,0]]]
-            points = np.array(L)
-            vectors = np.array(vec)
+            points = np.array(L,dtype=np.float64)
+            vectors = np.array(vec,dtype=np.float64)
         else:
             points = args[0]
             if len(args) >= 2:
@@ -93,7 +93,7 @@ class Structure:
 
 
 class Pairing:
-    def __init__(self,permutation,A,B): #permutation is a list of size N containing integers 0 to N-1, such that L[i] = j means point i of A is paired to point j of B 
+    def __init__(self,permutation: list,A,B): #permutation is a list of size N containing integers 0 to N-1, such that L[i] = j means point i of A is paired to point j of B 
         self.perm = permutation
         self.A = A
         self.B = B
@@ -114,7 +114,10 @@ class Pairing:
         U = self.A.points
         rmsd = k.fit(U,V_arr)
         V_trans = k.transform(V_arr)
-        self.B.points = V_trans
+        V_trans_correctperm = []
+        for i in range(self.B.points.shape[0]):
+            V_trans_correctperm.append(V_trans[self.perm.index(i)])
+        self.B.points = np.array(V_trans_correctperm)
         self.B.rotate(k.rot,only_vectors = True)
         return rmsd, k.trans, k.rot
 
@@ -157,7 +160,7 @@ def make_neibourhood(a: int,A: Structure,m:int):
     neibours = [a]
     neibours.extend(norbors)
     
-    return Structure(A.points[neibours],A.vectors[neibours]), neibours
+    return Structure(A.points[neibours].copy(),A.vectors[neibours].copy()), neibours
 
 
 
