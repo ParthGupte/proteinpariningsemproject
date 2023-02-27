@@ -81,6 +81,10 @@ class Structure:
             n = self.vectors.shape[0]
             for i in range(n):
                 self.vectors[i] = r.apply(self.vectors[i])
+    
+    def tumble(self):
+        self.translate([1,2,3])
+        self.rotate(R.from_rotvec(np.random.randint(-5,5,size=3)))
 
     def display(self,col):
         fig = plt.figure()
