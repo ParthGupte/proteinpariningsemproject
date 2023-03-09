@@ -1,4 +1,5 @@
 from proteinhelper import *
+from PDBtoStructure import *
 
 def best_neibourhood_find(protA,protB,m):
     neibour_scoredict = {}
@@ -27,7 +28,7 @@ def best_neibourhood_find(protA,protB,m):
 
     best_match = sorted(neibour_scoredict.items(),key=lambda x:x[1])[0]
     print("Best match is:",best_match)
-    print(neibourhood_match(best_match[0][0],best_match[0][1],protA,protB,7))
+    print(neibourhood_match(best_match[0][0],best_match[0][1],protA,protB,m))
 
 
 def neibourhood_match(i,j,protA,protB,m):
@@ -52,7 +53,15 @@ def neibourhood_match(i,j,protA,protB,m):
     return rmsd , equivs
 
 
-cube_A = Structure(cube = True)
-cube_B = cube_A.copy()
-cube_B.tumble()
-best_neibourhood_find(cube_A,cube_B,7)
+# cube_A = Structure(cube = True)
+# cube_B = cube_A.copy()
+# cube_B.tumble()
+# best_neibourhood_find(cube_A,cube_B,7)
+
+anishpdb = PDB("PDBfiles/anish.pdb")
+print(anishpdb.file_name)
+anishstruc = PDBtoStructure(anishpdb)
+anishstruc.display('r')
+anishstruc_copy = anishstruc.copy()
+anishstruc_copy.tumble()
+best_neibourhood_find(anishstruc,anishstruc_copy,16)
