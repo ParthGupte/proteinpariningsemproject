@@ -94,10 +94,14 @@ class Structure:
         z = self.points[:,2]
         ax.scatter(x,y,z,c=col)
         plt.show()
+    
+    def copy(self):
+        return Structure(self.points.copy(),self.vectors.copy())
 
 
 class Pairing:
-    def __init__(self,permutation: list,A,B): #permutation is a list of size N containing integers 0 to N-1, such that L[i] = j means point i of A is paired to point j of B 
+    def __init__(self,permutation: list,A,B): 
+        #permutation is a list of size N containing integers 0 to N-1, such that L[i] = j means point i of A is paired to point j of B 
         self.perm = permutation
         self.A = A
         self.B = B
