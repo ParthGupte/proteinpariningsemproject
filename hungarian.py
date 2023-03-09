@@ -1,5 +1,6 @@
 from proteinhelper import *
 from PDBtoStructure import *
+import time
 
 def best_neibourhood_find(protA,protB,m):
     neibour_scoredict = {}
@@ -45,9 +46,9 @@ def neibourhood_match(i,j,protA,protB,m):
     new_perm = pair_match.hungarian()
     rmsd = pair_match.rmsd()
     equivs = {} #key = index of points in A, value = index of points in B
-    if i==j:
-            print(rmsd)
-            pair_match.display('red','green')
+    # if i==j:
+    #         print(rmsd)
+    #         pair_match.display('red','green')
     for i in range(len(new_perm)):
         equivs[pointsA[i]] = pointsB[new_perm[i]] 
     return rmsd , equivs
@@ -58,10 +59,36 @@ def neibourhood_match(i,j,protA,protB,m):
 # cube_B.tumble()
 # best_neibourhood_find(cube_A,cube_B,7)
 
-anishpdb = PDB("PDBfiles/anish.pdb")
-print(anishpdb.file_name)
-anishstruc = PDBtoStructure(anishpdb)
-anishstruc.display('r')
-anishstruc_copy = anishstruc.copy()
-anishstruc_copy.tumble()
-best_neibourhood_find(anishstruc,anishstruc_copy,16)
+# anishpdb = PDB("PDBfiles/anish.pdb")
+# print(anishpdb.file_name)
+# anishstruc = PDBtoStructure(anishpdb)
+# anishstruc.display('r')
+# anishstruc_copy = anishstruc.copy()
+# anishstruc_copy.tumble()
+# best_neibourhood_find(anishstruc,anishstruc_copy,16)
+
+one_emapdb = PDB("PDBfiles/1ema.pdb")
+print(one_emapdb.file_name)
+one_ema_struc = PDBtoStructure(one_emapdb)
+one_ema_struc.display('r')
+one_ema_struc_copy = one_ema_struc.copy()
+one_ema_struc_copy.tumble()
+t1 = time.time()
+best_neibourhood_find(one_ema_struc,one_ema_struc_copy,5)
+t2 = time.time()
+print("That took ",t2-t1,"secs")
+
+one_qyopdb = PDB("PDBfiles/1qyo.pdb")
+print(one_qyopdb.file_name)
+one_qyo_struc = PDBtoStructure(one_qyopdb)
+one_qyo_struc_copy = one_qyo_struc.copy()
+one_qyo_struc_copy.tumble()
+t1 = time.time()
+best_neibourhood_find(one_qyo_struc,one_qyo_struc_copy,5)
+t2 = time.time()
+print("That took ",t2-t1,"secs")
+
+t1 = time.time()
+best_neibourhood_find(one_ema_struc,one_qyo_struc,5)
+t2 = time.time()
+print("That took ",t2-t1,"secs")
