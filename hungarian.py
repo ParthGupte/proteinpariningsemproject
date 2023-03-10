@@ -2,7 +2,7 @@ from proteinhelper import *
 from PDBtoStructure import *
 import time
 
-def best_neibourhood_find(protA,protB,m):
+def best_neibourhood_find(protA,protB,m,display=False):
     neibour_scoredict = {}
 
     for i in range(protA.points.shape[0]):
@@ -29,7 +29,11 @@ def best_neibourhood_find(protA,protB,m):
 
     best_match = sorted(neibour_scoredict.items(),key=lambda x:x[1])[0]
     print("Best match is:",best_match)
-    print(neibourhood_match(best_match[0][0],best_match[0][1],protA,protB,m))
+    final_out = neibourhood_match(best_match[0][0],best_match[0][1],protA,protB,m)
+    print(final_out)
+    if display:
+        display_equiv_fit(final_out[1],protA,protB)
+    return final_out
 
 
 def neibourhood_match(i,j,protA,protB,m):
@@ -53,6 +57,28 @@ def neibourhood_match(i,j,protA,protB,m):
         equivs[pointsA[i]] = pointsB[new_perm[i]] 
     return rmsd , equivs
 
+def display_equiv_fit(equiv,protA: Structure,protB: Structure):
+    '''
+    Outputs Pairing Class with the equivalances kearsley fitted and the structures transformed accordingly
+    '''
+    keys = []
+    values = []
+    for key, val in equiv.items():
+        keys.append(key)
+        values.append(val)
+    equiv_pointsA = protA.points[keys].copy()
+    equiv_pointsB = protB.points[values].copy()
+    equiv_vecsA = protA.vectors[keys].copy()
+    equiv_vecsB = protB.vectors[values].copy()
+    equiv_strucA = Structure(equiv_pointsA,equiv_vecsA)
+    equiv_strucB = Structure(equiv_pointsB,equiv_vecsB)
+    equiv_pairing = Pairing(list(range(len(keys))),equiv_strucA,equiv_strucB)
+    trans, rot = equiv_pairing.kearsley()[1:]
+    protB.translate(-trans)
+    protB.rotate(rot)
+    superimpStruc = Pairing([],protA,protB)
+    superimpStruc.display('g','r')
+
 
 # cube_A = Structure(cube = True)
 # cube_B = cube_A.copy()
@@ -74,9 +100,10 @@ one_ema_struc.display('r')
 one_ema_struc_copy = one_ema_struc.copy()
 one_ema_struc_copy.tumble()
 t1 = time.time()
-best_neibourhood_find(one_ema_struc,one_ema_struc_copy,5)
+best_neibourhood_find(one_ema_struc,one_ema_struc_copy,5,display = True)
 t2 = time.time()
 print("That took ",t2-t1,"secs")
+# display_equiv_fit(equiv,one_ema_struc,one_ema_struc_copy)
 
 one_qyopdb = PDB("PDBfiles/1qyo.pdb")
 print(one_qyopdb.file_name)
@@ -84,11 +111,13 @@ one_qyo_struc = PDBtoStructure(one_qyopdb)
 one_qyo_struc_copy = one_qyo_struc.copy()
 one_qyo_struc_copy.tumble()
 t1 = time.time()
-best_neibourhood_find(one_qyo_struc,one_qyo_struc_copy,5)
+best_neibourhood_find(one_qyo_struc,one_qyo_struc_copy,5,display = True)
 t2 = time.time()
 print("That took ",t2-t1,"secs")
+# display_equiv_fit(equiv,one_qyo_struc,one_qyo_struc_copy)
 
 t1 = time.time()
-best_neibourhood_find(one_ema_struc,one_qyo_struc,5)
+best_neibourhood_find(one_ema_struc,one_qyo_struc,5,display = True)
 t2 = time.time()
 print("That took ",t2-t1,"secs")
+# display_equiv_fit(equiv,one_ema_struc,one_qyo_struc)
